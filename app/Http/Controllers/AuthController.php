@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\User;
+use App\Models\Candidate;
+use App\Models\Employer;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Hash;
@@ -11,12 +13,11 @@ class AuthController extends Controller
     // register users
     public function register(Request $request)
     {
+
         $data = $request->validate([
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'role' => 'required|string',
-            'field' => 'required|string',
+            'user_type' => 'required|string|in:employer,candidate',
             'email' => 'required|email|string|unique:users,email',
+            'field' => 'required|string',
             'password' => [
                 'required',
                 'confirmed',
@@ -24,19 +25,44 @@ class AuthController extends Controller
             ]
         ]);
 
+        if($request->user_type === 'employer'){
+            $data += $request->validate([
+                'company_name' => 'required|string',
+                'company_size' => 'required|int',
+        ]);
+    
+        } else {
+            $data += $request->validate([
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+            ]);
+        }
+
         /** @var \App\Models\User $user */
         $user = User::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'role' => $data['role'],
+            'user_type' => $data['user_type'],
             'field' => $data['field'],
             'email' => $data['email'],
             'password' => Hash::make($data['password'])
         ]);
+        if ($data['user_type'] === 'employer') {
+            Employer::create([
+                'user_id' => $user->id,
+                'company_name' => $data['company_name'],
+                'company_size' => $data['company_size']
+            ]);
+        } else {
+            Candidate::create([
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'user_id' => $user->id,
+            ]);
+        }
+
         $token = $user->createToken('main')->plainTextToken;
 
         return response()->json([
-            'message' => 'User successfully registered',
+            'message' => 'Your account is created successfully',
             'user' => $user,
             'token' => $token,
         ]);
