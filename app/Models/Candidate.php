@@ -17,4 +17,10 @@ class Candidate extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function candidacies() 
+    {
+        return $this->hasMany(Candidacy::class, 'candidate_id');
+    }
+    
+
 }

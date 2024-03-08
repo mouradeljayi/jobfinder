@@ -15,4 +15,10 @@ class Employer extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function offers() 
+    {
+        return $this->hasMany(Offer::class, 'employer_id');
+    }
+    
 }
