@@ -30,7 +30,7 @@ class AuthController extends Controller
                 'company_name' => 'required|string',
                 'company_size' => 'required|int',
         ]);
-    
+
         } else {
             $data += $request->validate([
                 'first_name' => 'required|string',
@@ -66,5 +66,27 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token,
         ]);
+    }
+
+    //login users
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email|string',
+            'password' => 'required|string',
+        ]);
+
+        if (auth()->attempt($credentials)) {
+            $user = auth()->user();
+            $token = $user->createToken('main')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Logged in successfully',
+                'user' => $user,
+                'token' => $token,
+            ]);
+        } else {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
     }
 }
