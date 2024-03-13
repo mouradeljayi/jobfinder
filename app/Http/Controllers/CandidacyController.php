@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Employer;
 use App\Models\Offer;
@@ -13,7 +14,7 @@ use App\Models\Candidacy;
 class CandidacyController extends Controller
 {
     // fetch candidacies of an employer
-    public function employerCandidacies($offerId)
+    public function getEmployerCandidacies($offerId)
     {
         $user = Auth::user();
         $employer = Employer::where('user_id', $user->id)->first();
@@ -74,5 +75,28 @@ class CandidacyController extends Controller
             'message' => 'Candidacy status updated to ' . $request->status,
             'candidacy' => $candidacy,
         ]);
+    }
+
+    // Generate PDF for accepted candidacies
+    public function generatePDF($offerId)
+    {
+        $user = Auth::user();
+        $employer = Employer::where('user_id', $user->id)->first();
+        if (!$employer) {
+            return response()->json(['message' => 'Employer not found'], 404);
+        }
+        $offer = Offer::where('id', $offerId)
+                ->where('employer_id', $employer->id)
+                ->first();
+        if (!$offer) {
+            return response()->json(['message' => 'Offer not found'], 404);
+        }
+        $candidacies = Candidacy::where('offer_id', $offer->id)
+                                ->where('status', Candidacy::STATUS_ACCEPTED)
+                                ->with(['candidate'])
+                                ->get();
+
+        $pdf = Pdf::loadView('candidacies.accepted', compact('candidacies', 'offer', 'employer'));
+        return $pdf->download('accepted-candidacies.pdf');
     }
 }
