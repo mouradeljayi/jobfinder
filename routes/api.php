@@ -1,6 +1,9 @@
 <?php
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CandidacyController;
+use App\Http\Controllers\NotificationController;
+
+
 
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('is_candidate')->group(function () {
         Route::post('/candidacies', [CandidacyController::class, 'createCandidacy']);
     });
+
+    Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::delete('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification']);
 
 });
 
