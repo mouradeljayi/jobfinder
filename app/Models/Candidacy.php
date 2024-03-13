@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Notifications\CandidacyStatusUpdated;
 
 class Candidacy extends Model
 {
@@ -26,6 +27,18 @@ class Candidacy extends Model
         self::STATUS_ACCEPTED, 
         self::STATUS_REJECTED,
     ];
+
+     // Send notification to candidate whenever candidacy status changed
+     public static function boot() {
+        parent::boot();
+    
+        static::updated(function ($candidacy) {
+            if ($candidacy->isDirty('status')) {
+                $user = $candidacy->candidate->user;
+                $user->notify(new CandidacyStatusUpdated($candidacy));
+            }
+        });
+    }
 
     public function offer() 
     {
