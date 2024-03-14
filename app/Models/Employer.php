@@ -20,5 +20,11 @@ class Employer extends Model
     {
         return $this->hasMany(Offer::class, 'employer_id');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(EmployerReview::class);
+    }
+
     
 }

@@ -9,7 +9,11 @@ class Candidate extends Model
     protected $table = 'candidates';
 
     protected $fillable = [
-        'user_id', 'first_name', 'last_name',
+        'user_id', 
+        'first_name', 
+        'last_name', 
+        'education_level', 
+        'experience'
     ];
 
     public function user()
@@ -22,5 +26,10 @@ class Candidate extends Model
         return $this->hasMany(Candidacy::class, 'candidate_id');
     }
     
+    public function reviews()
+    {
+        return $this->hasMany(EmployerReview::class);
+    }
+
 
 }
