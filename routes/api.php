@@ -3,7 +3,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CandidacyController;
 use App\Http\Controllers\EmployerReviewController;
 use App\Http\Controllers\NotificationController;
-
+use App\Http\Controllers\OfferController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -27,6 +27,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/reviews/{review}', [EmployerReviewController::class, 'updateReview']);
         Route::delete('/reviews/{review}', [EmployerReviewController::class, 'deleteReview']);
     });
+
+    //Offers Routes
+    Route::middleware('is_employer')->group(function () {
+        Route::get('/offers', [OfferController::class, 'findAllOffers']);
+        Route::get('/offers/{offer}', [OfferController::class, 'findOffer']);
+        Route::post('/offers/{offer}', [OfferController::class, 'createOffer']);
+        Route::put('/offers/{offer}', [OfferController::class, 'updateOffer']);
+        Route::delete('/offers/{offer}', [OfferController::class, 'deleteOffer']);
+    });
+
+
 
     // Common Routes
     Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);
