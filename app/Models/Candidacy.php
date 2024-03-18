@@ -15,26 +15,26 @@ class Candidacy extends Model
     const STATUS_REJECTED = 'rejected';
 
     protected $fillable = [
-        'offer_id', 
-        'candidate_id', 
+        'offer_id',
+        'candidate_id',
         'status',
     ];
 
     public static $validStatuses = [
-        self::STATUS_APPLIED, 
-        self::STATUS_REVIEWING, 
-        self::STATUS_ACCEPTED, 
+        self::STATUS_APPLIED,
+        self::STATUS_REVIEWING,
+        self::STATUS_ACCEPTED,
         self::STATUS_REJECTED,
     ];
 
-    public function offer() 
+    public function offer()
     {
         return $this->belongsTo(Offer::class);
     }
-    
-    public function candidate() 
+
+    public function candidate()
     {
         return $this->belongsTo(User::class, 'candidate_id');
     }
-    
+
 }
