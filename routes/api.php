@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/reviews', [EmployerReviewController::class, 'getAllReviews']);
+Route::get('/offers', [OfferController::class, 'findAllOffers']);
+Route::get('/offers/{offer}', [OfferController::class, 'findOffer']);
 
 // Group all routes that require authentication
 Route::middleware('auth:sanctum')->group(function () {
@@ -23,8 +25,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.candidacies.generatePDF');
 
         //Offers Routes
-        Route::get('/offers', [OfferController::class, 'findAllOffers']);
-        Route::get('/offers/{offer}', [OfferController::class, 'findOffer']);
         Route::post('/offers/{offer}', [OfferController::class, 'createOffer']);
         Route::put('/offers/{offer}', [OfferController::class, 'updateOffer']);
         Route::delete('/offers/{offer}', [OfferController::class, 'deleteOffer']);
@@ -38,7 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/reviews/{review}', [EmployerReviewController::class, 'updateReview']);
         Route::delete('/reviews/{review}', [EmployerReviewController::class, 'deleteReview']);
 
-        //Cv Routes
+        //CV Routes
          Route::get('/cv', [CvController::class, 'getCvByCandidate']);
          Route::post('/cv/{cv}', [CvController::class, 'createCv']);
          Route::delete('/cv/{cv}', [CvController::class, 'deleteCv']);
@@ -73,9 +73,6 @@ Route::middleware('auth:sanctum')->group(function () {
          Route::delete('/cv/experiences/{experience}', [CvController::class, 'deleteExperience']);
 
      });
-
-
-
 
     // Common Routes
     Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);

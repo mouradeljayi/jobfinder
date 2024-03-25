@@ -4,29 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Offer extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
-    protected $dates = ['deleted_at'];
-    
-    const TYPE_PART_TIME = 'part time';
-    const TYPE_FULL_TIME = 'full time';
-    const TYPE_INTERNSHIP = 'internship';
+    const TYPE_PART_TIME = "part time";
+    const TYPE_FULL_TIME = "full time";
+    const TYPE_INTERNSHIP = "internship";
 
 
     protected $fillable = [
-                'employer_id',
-                'title',
-                'description',
-                'location',
-                'type',
-                'salary',
-                'experience',
-                'deadline',
+        'employer_id',
+        'title',
+        'description',
+        'location',
+        'type',
+        'salary',
+        'experience',
+        'deadline',
     ];
 
     public static $offerType = [
@@ -35,6 +33,32 @@ class Offer extends Model
         self::TYPE_INTERNSHIP,
 
     ];
+
+    public static function filterOffers(array $filters): Builder
+    {
+        $query = self::query();
+
+        if (!empty($filters['location'])) {
+            $query->where('location', 'LIKE', '%' . $filters['location'] . '%');
+        }
+
+        if (!empty($filters['type'])) {
+            $query->where('type', $filters['type']);
+        }
+
+        if (!empty($filters['salary_range'])) {
+            [$min, $max] = explode('-', $filters['salary_range']);
+            $query->whereBetween('salary', [(int)$min, (int)$max]);
+        }
+
+        if (!empty($filters['experience'])) {
+            $query->where('experience', $filters['experience']);
+        }
+
+        // You can add more filters here as needed
+
+        return $query;
+    }
 
     public function employer()
     {

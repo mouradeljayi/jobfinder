@@ -9,84 +9,57 @@ use Illuminate\Support\Facades\Auth;
 
 class OfferController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function findAllOffers()
+
+    // Fetch all offers or with filters
+    public function findAllOffers(Request $request)
     {
-        $offers = Offer::latest()->get();
-        return response()->json([
-            'message' => 'Offers successfully retrieved',
-            'offers' => $offers
-        ], 200);
+        $filters = $request->only(['location', 'type', 'salary_range', 'experience']);
+        $offers = Offer::filterOffers($filters)->get();
+
+        return response()->json($offers);
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Create a new offer
     public function createOffer(Request $request)
     {
-        if (Auth::check()) {
-            $user = Auth::user();
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'location' => 'required|string',
+            'type' => ['required', 'string', Rule::in(Offer::$offerType)],
+            'salary' => 'required|string',
+            'experience' => 'required|string',
+            'deadline' => 'required|date',
+        ]);
 
-            $validated = $request->validate([
-                'title' => 'required|string',
-                'description' => 'required|string',
-                'location' => 'required|string',
-                'type' => ['required', 'string', Rule::in(Offer::$offerType)],
-                'salary' => 'required|string',
-                'experience' => 'required|string',
-                'deadline' => 'required|date_format:Y-m-d',
-            ]);
+        $offer = new Offer();
+        $offer->employer_id = Auth::id();
+        $offer->title = $request->title;
+        $offer->description = $request->description;
+        $offer->location = $request->location;
+        $offer->type = $request->type;
+        $offer->salary = $request->salary;
+        $offer->experience = $request->experience;
+        $offer->deadline = $request->deadline;
+        $offer->save();
 
-            // Attribuer employer_id avant la création de l'offre
-            $validated['employer_id'] = $user->id;
-
-            $offer = Offer::create($validated);
-
-            return response()->json([
-                'message' => 'Offer successfully created',
-                'offer' => $offer
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
-        }
+        return response()->json([
+            'message' => 'Offer successfully created'
+        ], 201);
     }
 
-
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function findOffer(string $id)
+    // Get one single offer
+    public function findOffer(Offer $offer)
     {
-        $singleOfferFromDB = Offer::where('id', $id)->first();
-
-        if(!is_null($singleOfferFromDB)){
-            return response()->json([
-                'message' => 'Offer found',
-                'offer' => $singleOfferFromDB
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Offer not found',
-            ], 404);
-        }
+        return response()->json($offer);
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function updateOffer(Request $request, string $idOffer)
+    // Update a single offer
+    public function updateOffer(Request $request, Offer $offer)
     {
         $user = Auth::user();
 
-        $validatedData = $request->validate([
+        $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
             'location' => 'required|string',
@@ -96,21 +69,15 @@ class OfferController extends Controller
             'deadline' => 'required|date_format:Y-m-d',
         ]);
 
-        $singleOfferFromDB = Offer::find($idOffer);
-
-        if ($user->id != $singleOfferFromDB->employer_id) {
+        if ($user->id != $offer->employer_id) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        $offer->update($request->all());
 
-        $singleOfferFromDB->update($validatedData);
-
-        return response()->json(['message' => 'Offer updated successfully', 'offer' => $singleOfferFromDB]);
+        return response()->json(['message' => 'Offer updated successfully', 'offer' => $offer]);
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Remove a single offer
     public function deleteOffer(Offer $offer)
     {
         if ($offer->employer_id !== Auth::id()) {
@@ -119,7 +86,6 @@ class OfferController extends Controller
         $offer->delete();
         return response()->json([
             'message' => 'Offer successfully deleted',
-        ], 201);
-
+        ], 200);
     }
 }
