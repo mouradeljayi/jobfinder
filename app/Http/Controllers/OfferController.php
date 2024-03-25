@@ -46,7 +46,8 @@ class OfferController extends Controller
             $offer = Offer::create($validated);
 
             return response()->json([
-                'message' => 'Offer successfully created'
+                'message' => 'Offer successfully created',
+                'offer' => $offer
             ], 200);
         } else {
             return response()->json([
