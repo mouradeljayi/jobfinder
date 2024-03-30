@@ -14,7 +14,8 @@ class OfferController extends Controller
     public function findAllOffers(Request $request)
     {
         $filters = $request->only(['location', 'type', 'salary_range', 'experience']);
-        $offers = Offer::filterOffers($filters)->get();
+        $perPage = $request->input('perPage', 10);
+        $offers = Offer::filterOffers($filters)->paginate($perPage);
 
         return response()->json($offers);
     }

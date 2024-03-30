@@ -9,7 +9,7 @@ class NotificationController extends Controller
     public function getUnreadNotifications()
     {
         $user = Auth::user();
-        $unreadNotifications = $user->unreadNotifications;
+        $unreadNotifications = $user->unreadNotifications->paginate(10);
 
         return response()->json($unreadNotifications);
     }

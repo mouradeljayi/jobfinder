@@ -56,6 +56,7 @@ class Offer extends Model
         }
 
         // You can add more filters here as needed
+        $query->orderBy('created_at', 'desc');
 
         return $query;
     }

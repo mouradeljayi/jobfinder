@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employer_id')->constrained('employers')->onDelete('cascade');
             $table->foreignId('candidate_id')->constrained('candidates')->onDelete('cascade');
+            $table->foreignId('parent_id')->nullable()->constrained('employer_reviews')->onDelete('cascade');
             $table->text('feedback');
             $table->tinyInteger('rating');
             $table->timestamps();
