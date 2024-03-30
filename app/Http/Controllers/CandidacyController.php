@@ -14,7 +14,7 @@ use App\Models\Candidacy;
 class CandidacyController extends Controller
 {
     // fetch candidacies of an employer
-    public function getEmployerCandidacies($offerId)
+    public function getEmployerCandidacies(Request $request, $offerId)
     {
         $user = Auth::user();
         $employer = Employer::where('user_id', $user->id)->first();
@@ -31,7 +31,9 @@ class CandidacyController extends Controller
             return response()->json(['message' => 'Offer not found'], 404);
         }
 
-        $candidacies = Candidacy::where('offer_id', $offer->id)->with(['candidate', 'offer'])->get();
+        $perPage = $request->input('perPage', 10);
+        $candidacies = Candidacy::where('offer_id', $offer->id)
+            ->with(['candidate', 'offer'])->paginate($perPage);
 
         return response()->json($candidacies);
     }

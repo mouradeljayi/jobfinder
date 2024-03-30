@@ -10,22 +10,18 @@ use App\Models\Cv;
 
 class CvController extends Controller
 {
-    public function createCv()
+    public function createCV()
     {
         $user = Auth::user();
-
-        // Créez une nouvelle instance de Cv avec l'ID de l'utilisateur authentifié
         $cv = new Cv();
         $cv->candidate_id = $user->id;
-
-        // Sauvegardez le Cv et vérifiez si la sauvegarde a réussi
         $cv->save();
         return response()->json(
             ['message' => 'CV created successfully'],
             200
         );
     }
-    public function deleteCv(Cv $cv)
+    public function deleteCV(Cv $cv)
     {
         $user = Auth::user();
         $cv = Cv::where('candidate_id', $user->id)->first();
@@ -34,7 +30,7 @@ class CvController extends Controller
             'message' => 'Cv successfully deleted',
         ], 200);
     }
-    public function getCvByCandidate()
+    public function getCVByCandidate()
     {
         $user = Auth::user();
         $cv = Cv::where('candidate_id', $user->id)->first();
@@ -45,8 +41,8 @@ class CvController extends Controller
         return response()->json($cv);
     }
 
-    //CRUD cv path
-    public function uploadCv(Request $request)
+    // CV FILE CRUD 
+    public function uploadCV(Request $request)
     {
 
         $user = Auth::user();
@@ -79,7 +75,7 @@ class CvController extends Controller
         }
     }
 
-    public function updateCvPath(Request $request, CV $cv)
+    public function updateCVPath(Request $request, CV $cv)
     {
 
         $user = Auth::user();
@@ -90,8 +86,6 @@ class CvController extends Controller
                 'message' => 'CV not found'
             ], 404);
         }
-
-        // Vérifiez si l'utilisateur est autorisé à mettre à jour ce CV
         if ($cv->candidate_id !== $user->id) {
             return response()->json([
                 'message' => 'Unauthorized'
@@ -103,17 +97,17 @@ class CvController extends Controller
         ]);
 
         if ($request->file('cv_file')->isValid()) {
-            // Supprimez l'ancien fichier CV s'il existe
+            // Delete tha old CV File if exists
             if ($cv->cv_path) {
                 Storage::delete($cv->cv_path);
             }
 
             $cvFileName = time() . '_' . $request->file('cv_file')->getClientOriginalName();
 
-            // Stockez le nouveau fichier CV dans le répertoire storage/app/public/cv
+            // Store the new file into storage/app/public/cv
             $request->file('cv_file')->storeAs('public/cv', $cvFileName);
 
-            // Mettez à jour le chemin du fichier CV dans la base de données
+            // Update the path in DB
             $cv->cv_path = 'storage/cv/' . $cvFileName;
             $cv->save();
 
@@ -128,10 +122,8 @@ class CvController extends Controller
         }
     }
 
-    public function deleteCvPath(Cv $cv)
+    public function deleteCVPath(Cv $cv)
     {
-
-
         $user = Auth::user();
         $cv = Cv::where('candidate_id', $user->id)->first();
 
@@ -141,12 +133,10 @@ class CvController extends Controller
             ], 404);
         }
 
-        // Supprimer le fichier CV du stockage
         if ($cv->cv_path) {
             Storage::delete($cv->cv_path);
         }
 
-        // Videz l'attribut cv_path
         $cv->cv_path = null;
         $cv->save();
 
@@ -155,12 +145,11 @@ class CvController extends Controller
         ]);
     }
 
-    //CRUD education
+    // Education CRUD
     public function createEducation(Request $request)
     {
         $user = Auth::user();
         $cv = Cv::where('candidate_id', $user->id)->first();
-        // Vérifier si le candidat a un CV
         if ($cv) {
             $education = $request->input('education');
             $educations = $cv->education;
@@ -202,14 +191,15 @@ class CvController extends Controller
         }
         return response()->json(['message' => 'Education not found'], 404);
     }
-    //find all education
+
     public function getEducations(Cv $cv)
     {
         $user = Auth::user();
         $cv = Cv::where('candidate_id', $user->id)->first();
         return response()->json($cv->education);
     }
-    //CRUD skills
+
+    // Skills CRUD
     public function createSkill(Request $request, Cv $cv)
     {
         $user = Auth::user();
@@ -253,7 +243,7 @@ class CvController extends Controller
         }
         return response()->json(['message' => 'Skill not found'], 404);
     }
-    //find all skills
+
     public function getSkills(Cv $cv)
     {
         $user = Auth::user();
@@ -261,13 +251,11 @@ class CvController extends Controller
         return response()->json($cv->skills);
     }
 
-    //CRUD certifications
-
+    // Certifications CRUD
     public function createCertification(Request $request, Cv $cv)
     {
         $user = Auth::user();
         $cv = Cv::where('candidate_id', $user->id)->first();
-        // Vérifier si le candidat a un CV
         if ($cv) {
             $certification = $request->input('certification');
             $certifications = $cv->certifications;
@@ -317,7 +305,8 @@ class CvController extends Controller
         $cv = Cv::where('candidate_id', $user->id)->first();
         return response()->json($cv->certifications);
     }
-    //CRUD languages
+
+    // languages CRUD
     public function createLanguage(Request $request, Cv $cv)
     {
         $user = Auth::user();
@@ -365,7 +354,8 @@ class CvController extends Controller
         $cv = Cv::where('candidate_id', $user->id)->first();
         return response()->json($cv->languages);
     }
-    //CRUD experiences
+    
+    // Experiences CRUD
     public function createExperience(Request $request, Cv $cv)
     {
         $user = Auth::user();
