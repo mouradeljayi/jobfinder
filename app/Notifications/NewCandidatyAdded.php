@@ -7,18 +7,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CandidacyStatusUpdated extends Notification
+class NewCandidatyAdded extends Notification
 {
     use Queueable;
-
-    private $candidacy;
-
+    private $offer;
     /**
      * Create a new notification instance.
      */
-    public function __construct($candidacy)
+    public function __construct($offer)
     {
-        $this->candidacy = $candidacy;
+        $this->offer = $offer;
     }
 
     /**
@@ -28,7 +26,7 @@ class CandidacyStatusUpdated extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail'];
     }
 
     /**
@@ -37,9 +35,9 @@ class CandidacyStatusUpdated extends Notification
     // public function toMail(object $notifiable): MailMessage
     // {
     //     return (new MailMessage)
-    //                 ->line('The introduction to the notification.')
-    //                 ->action('Notification Action', url('/'))
-    //                 ->line('Thank you for using our application!');
+    //         ->line('The introduction to the notification.')
+    //         ->action('Notification Action', url('/'))
+    //         ->line('Thank you for using our application!');
     // }
 
     /**
@@ -50,7 +48,7 @@ class CandidacyStatusUpdated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'Your candidacy status for ' . $this->candidacy->offer->title . ' has been updated to ' . $this->candidacy->status,
+            'message' => 'A new candidaty has been added  for ' . $this->offer->title,
         ];
     }
 }
