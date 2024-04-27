@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CandidacyController;
 use App\Http\Controllers\CvController;
@@ -31,6 +32,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/offers/{offer}', [OfferController::class, 'createOffer']);
         Route::put('/offers/{offer}', [OfferController::class, 'updateOffer']);
         Route::delete('/offers/{offer}', [OfferController::class, 'deleteOffer']);
+
+        //Analytics Routes
+        Route::get('/employer_offers', [AnalyticsController::class, 'employerOffers']);
+        Route::get('/candidaties_offer', [AnalyticsController::class, 'candidatiesOffer']);
+        Route::get('/describe_candidates/{id}', [AnalyticsController::class, 'describeCandidates']);
+        Route::get('/company_rating', [AnalyticsController::class, 'companyRating']);
     });
 
     /**
@@ -88,4 +95,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/reviews/{review}', [EmployerReviewController::class, 'updateReview']);
     Route::delete('/reviews/{review}', [EmployerReviewController::class, 'deleteReview']);
     Route::post('/employer-reviews/{reviewId}/reply', [EmployerReviewController::class, 'replyToReview']);
+
+    //Company rating route
+    Route::get('/company_rating/{company}', [AnalyticsController::class, 'companyRating']);
 });

@@ -13,7 +13,8 @@ class Candidate extends Model
         'first_name',
         'last_name',
         'education_level',
-        'experience'
+        'experience',
+        'location'
     ];
 
     public function user()

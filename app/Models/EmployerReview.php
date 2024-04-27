@@ -10,10 +10,10 @@ class EmployerReview extends Model
     use HasFactory;
 
     protected $fillable = [
-        'employer_id', 
-        'candidate_id', 
-        'feedback', 
-        'rating', 
+        'employer_id',
+        'candidate_id',
+        'feedback',
+        'rating',
         'parent_id'
     ];
 
