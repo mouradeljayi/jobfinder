@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Employer extends Model
@@ -8,7 +9,7 @@ class Employer extends Model
     protected $table = 'employers';
 
     protected $fillable = [
-        'user_id', 'company_name', 'company_size',
+        'user_id', 'company_name', 'company_size', 'location'
     ];
 
     public function user()
@@ -16,7 +17,7 @@ class Employer extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function offers() 
+    public function offers()
     {
         return $this->hasMany(Offer::class, 'employer_id');
     }
@@ -25,6 +26,4 @@ class Employer extends Model
     {
         return $this->hasMany(EmployerReview::class);
     }
-
-    
 }

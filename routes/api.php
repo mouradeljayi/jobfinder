@@ -7,6 +7,7 @@ use App\Http\Controllers\CvController;
 use App\Http\Controllers\EmployerReviewController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\RecommendationController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
@@ -15,6 +16,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/reviews', [EmployerReviewController::class, 'getAllReviews']);
 Route::get('/offers', [OfferController::class, 'findAllOffers']);
 Route::get('/offers/{offer}', [OfferController::class, 'findOffer']);
+
 
 // Group all routes that require authentication
 Route::middleware('auth:sanctum')->group(function () {
@@ -32,6 +34,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/offers/{offer}', [OfferController::class, 'createOffer']);
         Route::put('/offers/{offer}', [OfferController::class, 'updateOffer']);
         Route::delete('/offers/{offer}', [OfferController::class, 'deleteOffer']);
+        Route::post('/offers/skills/{id}', [OfferController::class, 'createSkills']);
+
 
         //Analytics Routes
         Route::get('/employer_offers', [AnalyticsController::class, 'employerOffers']);
@@ -80,6 +84,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/cv/experiences/{experience}', [CvController::class, 'createExperience']);
         Route::put('/cv/experiences/{experience}', [CvController::class, 'updateExperience']);
         Route::delete('/cv/experiences/{experience}', [CvController::class, 'deleteExperience']);
+
+        //Recomandation route
+        Route::get('/recommandationOffers', [RecommendationController::class, 'index']);
     });
 
     /**

@@ -35,6 +35,4 @@ class Candidate extends Model
     {
         return $this->hasOne(Cv::class);
     }
-
-
 }

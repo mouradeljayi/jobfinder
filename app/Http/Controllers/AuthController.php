@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use App\Models\Candidate;
 use App\Models\Employer;
@@ -25,12 +26,11 @@ class AuthController extends Controller
             ]
         ]);
 
-        if($request->user_type === 'employer'){
+        if ($request->user_type === 'employer') {
             $data += $request->validate([
                 'company_name' => 'required|string',
                 'company_size' => 'required|int',
-        ]);
-
+            ]);
         } else {
             $data += $request->validate([
                 'first_name' => 'required|string',

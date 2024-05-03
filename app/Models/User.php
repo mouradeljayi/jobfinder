@@ -27,7 +27,8 @@ class User extends Authenticatable
         'address',
         'bio',
         'linkden',
-        'website'
+        'website',
+        'location'
     ];
 
     /**

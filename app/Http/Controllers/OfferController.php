@@ -89,4 +89,23 @@ class OfferController extends Controller
             'message' => 'Offer successfully deleted',
         ], 200);
     }
+    //
+    public function createSkills(Request $request, $idOffer)
+    {
+        //$user = Auth::user(); // Assurez-vous que ce contrôleur est protégé par une authentification
+
+        $offer = Offer::find($idOffer);
+        if (!$offer) {
+            return response()->json(['message' => 'Offer not found'], 404);
+        }
+
+        $skill = $request->input('skill');
+        $skills = $offer->skills ?? []; // Utilisez l'opérateur null coalescent pour éviter les erreurs si `skills` est null
+        $skills[] = $skill;
+        $offer->skills = $skills;
+
+        $offer->save();
+
+        return response()->json(['message' => 'Skill created successfully'], 200);
+    }
 }

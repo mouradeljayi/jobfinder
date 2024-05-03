@@ -25,8 +25,11 @@ class Offer extends Model
         'salary',
         'experience',
         'deadline',
+        'skills'
     ];
-
+    protected $casts = [
+        'skills' => 'array',
+    ];
     public static $offerType = [
         self::TYPE_PART_TIME,
         self::TYPE_FULL_TIME,
