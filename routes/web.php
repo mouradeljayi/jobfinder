@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\GithubAuthController;
 use Illuminate\Support\Facades\Route;
+
+use Laravel\Socialite\Facades\Socialite;
+use App\Http\Controllers\GoogleAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +20,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return 'Weclome to JobFinder API';
 });
+Route::get('/login', function () {
+    return view('login');
+});
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('google-auth');
+Route::get('/auth/google/call-back', [GoogleAuthController::class, 'callbackGoogle']);
+
+//
+Route::get('/auth/github', [GithubAuthController::class, 'redirect'])->name('github-auth');
+Route::get('/auth/github/callback', [GithubAuthController::class, 'callbackGithub']);
