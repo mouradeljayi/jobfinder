@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use App\Models\Candidate;
 use App\Models\Employer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,12 +27,11 @@ class AuthController extends Controller
             ]
         ]);
 
-        if($request->user_type === 'employer'){
+        if ($request->user_type === 'employer') {
             $data += $request->validate([
                 'company_name' => 'required|string',
                 'company_size' => 'required|int',
-        ]);
-
+            ]);
         } else {
             $data += $request->validate([
                 'first_name' => 'required|string',
@@ -88,5 +89,33 @@ class AuthController extends Controller
         } else {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
+    }
+    public function calculateProfileCompletion()
+    {
+        $user = Auth::user();
+        $candidate = Candidate::where('user_id', $user->id)->first();
+        $profileCompletion = 0;
+        if ($candidate) {
+            $cv = CV::where('candidate_id', $candidate->id);
+
+            if ($cv) {
+                $profileCompletion += 1;
+            }
+            if (!empty($candidate->linkedin)) {
+                $profileCompletion += 1;
+            }
+            if (!empty($candidate->image)) {
+                $profileCompletion += 1;
+            }
+            if (!empty($candidate->address)) {
+                $profileCompletion += 1;
+            }
+            if (!empty($candidate->bio)) {
+                $profileCompletion += 1;
+            }
+        }
+
+
+        return $profileCompletion;
     }
 }
